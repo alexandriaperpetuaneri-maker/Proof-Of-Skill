@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171a2d">
+  <meta name="description" content="Try Proof of Skill from the candidate, reviewer, and employer perspectives.">
+  <title>Guided demo · Proof of Skill</title>
+  <style>
+    :root {
+      color-scheme:light; font:16px/1.55 Inter, "Segoe UI", system-ui, sans-serif;
+      --canvas:#f7f8fc; --ink:#1b1d31; --muted:#565b72; --line:#e1e3ef;
+      --purple:#5439c6; --dark:#4228ae; --lavender:#eeeaff;
+    }
+    *,*::before,*::after {box-sizing:border-box}
+    body {margin:0;color:var(--ink);background:var(--canvas)}
+    h1,h2,h3,p {margin:0}
+    h1,h2,h3 {line-height:1.2;letter-spacing:-.035em}
+    h1 {font-size:clamp(2rem,5.4vw,3.2rem);max-width:19ch}
+    h2 {font-size:clamp(1.35rem,3.8vw,1.85rem)}
+    h3 {font-size:1.02rem}
+    button,input,textarea,select {font:inherit}
+    button {cursor:pointer}
+    :focus-visible {outline:2px solid #7755f3;outline-offset:4px}
+    .topbar {
+      display:flex;align-items:center;justify-content:space-between;gap:12px 22px;flex-wrap:wrap;
+      min-height:68px;padding:12px clamp(18px,5vw,42px);background:white;border-bottom:1px solid var(--line)
+    }
+    .brand {display:flex;align-items:center;gap:10px;font-size:1.12rem;font-weight:780;letter-spacing:-.045em}
+    .logo {display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:#a892ff;color:#211844;font-weight:820}
+    main {max-width:1090px;margin:0 auto;padding:28px clamp(15px,4vw,34px) 55px}
+    .hero {position:relative;isolation:isolate;overflow:hidden;padding:clamp(20px,5vw,35px);border-radius:18px;background:#252044;color:white}
+    .hero::after {
+      content:"";z-index:-1;position:absolute;inset:0 0 0 auto;width:54%;
+      background:radial-gradient(ellipse at 80% 60%,#6949ac,transparent 64%),radial-gradient(circle,#c4a6ff66 1px,transparent 1.4px) 0 0/16px 16px;
+      mask-image:linear-gradient(to right,transparent,#000 70%)
+    }
+    .tag {display:inline-flex;align-items:center;gap:8px;padding:4px 9px;border:1px solid #ad99e478;border-radius:6px;color:#e5dbff;font-size:.85rem;font-weight:680;margin-bottom:12px}
+    .hero p {color:#e0dbf0;max-width:59ch;margin-top:12px}
+    .steps {display:grid;grid-template-columns:repeat(4,1fr);margin:17px 0;padding:0;list-style:none;border:1px solid var(--line);border-radius:12px;background:white;overflow:hidden}
+    .steps li {padding:12px;display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted);font-weight:640}
+    .steps li + li {border-left:1px solid var(--line)}
+    .steps li[aria-current=step] {color:var(--dark);background:#f2eeff}
+    .steps li.past {color:#22654e}
+    .step-number {display:grid;place-items:center;flex:none;width:24px;height:24px;border-radius:50%;background:#eff0f7;font-size:.81rem}
+    [aria-current=step] .step-number {color:white;background:var(--purple)}
+    .past .step-number {color:#21674e;background:#e7f5ee}
+    .layout {display:grid;grid-template-columns:minmax(0,1fr) minmax(210px,.37fr);align-items:start;gap:15px}
+    .panel {min-width:0;padding:clamp(15px,4vw,23px);background:white;border:1px solid var(--line);border-radius:14px}
+    .flow {display:grid;gap:15px}
+    .muted {color:var(--muted)}
+    .subtle {font-size:.9rem;color:var(--muted);margin-top:4px}
+    .actions {display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .btn {min-height:41px;display:inline-flex;align-items:center;justify-content:center;padding:7px 13px;background:white;border:1px solid var(--line);border-radius:8px;color:var(--ink);font-weight:680;font-size:.9rem;text-decoration:none}
+    .btn:hover {background:#f1edfd;border-color:#d2c8ef}
+    .btn.primary {color:white;background:var(--purple);border-color:var(--purple)}
+    .btn.primary:hover {background:var(--dark)}
+    .btn.small {min-height:35px;padding:5px 10px}
+    .brief {background:#f8f7fd;border:1px solid #e7e1fb;border-radius:10px;padding:13px;display:grid;gap:8px}
+    details summary {cursor:pointer;color:var(--dark);font-weight:680}
+    .brief dfn {font-style:normal;font-weight:650}
+    .brief dl {display:grid;gap:6px;margin:9px 0 1px}
+    .brief dl div {display:grid;grid-template-columns:7rem 1fr;gap:8px}
+    .brief dt {font-weight:660}
+    .brief dd {margin:0}
+    .field {display:grid;gap:4px}
+    .field label {font-weight:660}
+    .field small,.consent small {color:var(--muted);font-size:.87rem}
+    textarea,select {width:100%;min-width:0;padding:7px 9px;border:1px solid #c9ccdc;border-radius:8px;color:var(--ink);background:white}
+    textarea {min-height:72px;resize:vertical}
+    .consent {display:flex;gap:9px;padding:10px;border:1px solid var(--line);border-radius:8px}
+    .consent input {flex:none;width:18px;height:18px;margin:3px 0 0;accent-color:var(--purple)}
+    .consent small {display:block}
+    .score-row {display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:10px;align-items:start;border-bottom:1px solid var(--line);padding:9px 0}
+    .score-row p {color:#41465b;margin-top:3px;white-space:pre-wrap;overflow-wrap:anywhere}
+    .score-row label {display:block;font-size:.85rem;font-weight:660;margin-bottom:4px}
+    .pool-card,.result {border:1px solid #e4ddfa;border-radius:10px;padding:13px;background:#fbfaff;display:grid;gap:10px}
+    .pool-head {display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+    .pill {display:inline-flex;white-space:nowrap;border-radius:99px;background:var(--lavender);color:var(--dark);padding:4px 8px;font-size:.83rem;font-weight:720}
+    .evidence {list-style:none;margin:8px 0 0;padding:0}
+    .evidence li {padding:6px 0;border-top:1px solid var(--line)}
+    .evidence li p {white-space:pre-wrap;overflow-wrap:anywhere}
+    .feedback {background:#f1effb;border-radius:7px;padding:8px 10px;color:#493c70}
+    .fine-print {font-size:.86rem;color:var(--muted);margin-top:15px}
+    .legend {color:var(--dark);font-size:.88rem;font-weight:710}
+    .alert {color:#97343d;font-weight:650}
+    [hidden] {display:none!important}
+    @media(max-width:760px) {.layout {grid-template-columns:1fr}.steps li {padding:9px 7px;font-size:.83rem}}
+    @media(max-width:480px) {.steps{grid-template-columns:repeat(2,1fr)}.steps li:nth-child(3){border-left:none}.steps li:nth-child(n+3){border-top:1px solid var(--line)}.steps li{padding:7px}.score-row{grid-template-columns:1fr}.brief dl div{grid-template-columns:1fr;gap:1px}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo" aria-hidden="true">✓</span>Proof of Skill</div>
+    <nav class="actions" aria-label="Demo controls">
+      <a class="btn small" id="workspace" href="./" hidden>Hiring workspace</a>
+      <button class="btn small" id="download" type="button" hidden>Download demo</button>
+      <button class="btn small" type="button" data-action="restart" id="restart" hidden>Restart demo</button>
+    </nav>
+  </header>
+  <main>
+    <header class="hero">
+      <span class="tag">Interactive demo · About 3 minutes</span>
+      <h1>From work sample to interview</h1>
+      <p>Try Proof of Skill as a candidate, a human reviewer, and an employer hiring an implementation coordinator.</p>
+    </header>
+    <ol class="steps" id="steps" aria-label="Walkthrough progress"></ol>
+    <div class="layout">
+      <section class="panel flow" id="stage" aria-labelledby="stage-title"></section>
+      <aside class="panel flow" id="guidance" aria-label="How this works"></aside>
+    </div>
+    <p class="fine-print">Training scenario with fictional employers and candidate data. Your actions stay in this demo session.</p>
+    <p class="alert" id="download-error" role="alert" hidden></p>
+    <noscript><p>This walkthrough needs JavaScript. Open the file in a browser with JavaScript enabled.</p></noscript>
+  </main>
+  <script>
+    "use strict";
+    const rubric = [
+      {name:"Problem framing",prompt:"What problem could stop the rollout?",sample:"Dispatch is the immediate concern. Fourteen technicians lack region assignments, so the new system cannot route jobs to them."},
+      {name:"Prioritization",prompt:"What would you tackle first?",sample:"Ask payroll to hold the fallback before Wednesday noon, then fix the missing regions. Aim training at leads working launch day."},
+      {name:"Execution plan",prompt:"Who does what, and how will you check it?",sample:"The staffing lead confirms regions Wednesday morning. Engineering corrects and tests all 60 technician records. Operations makes the launch call Thursday at 3 p.m."},
+      {name:"Communication",prompt:"What would you tell the customer?",sample:"Friday remains the target. We're correcting 14 dispatch records and preserving a one-week fallback. We'll confirm the launch decision Thursday at 3 p.m."}
+    ];
+    const companies = ["Northline Field Systems","CivicLoop Software"];
+    const stepLabels = ["Work sample","Human review","Talent pool","Interview"];
+    const ratingLabels = ["Missing or off-base","Partial","Adequate","Strong","Specific and convincing"];
+    const stage = document.querySelector("#stage");
+    const steps = document.querySelector("#steps");
+    const guidance = document.querySelector("#guidance");
+    const safe = value => String(value ?? "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+    let current = 0;
+    let draft = freshDraft();
+    function freshDraft() {
+      return {answers:rubric.map(()=>""),consent:false,scores:rubric.map(()=>""),feedback:"",company:"",response:""};
+    }
+    const heading = (title,description) => `<div><h2 id="stage-title" tabindex="-1">${title}</h2><p class="subtle">${description}</p></div>`;
+    const action = (label,name,primary=false) => `<button class="btn${primary ? " primary" : ""}" type="button" data-action="${name}">${label}</button>`;
+    const formError = '<p class="alert" data-error role="alert" hidden></p>';
+    function workSample() {
+      return `${heading("Try the work sample","Candidate view · The Rollout Rescue")}
+        <div class="brief">
+          <p>A field-service company plans to launch scheduling software Friday. On Tuesday, you discover 14 of 60 technicians have no region assigned. The software needs a region to <dfn>dispatch</dfn> (assign jobs to) each technician.</p>
+          <p>Payroll can keep the old system running one extra week if told by Wednesday at noon. Only 8 of 24 shift leads have finished training.</p>
+          <details><summary>Plain-language glossary</summary><dl>
+            <div><dt>Dispatch</dt><dd>Assigning jobs to the people who will do them.</dd></div>
+            <div><dt>Fallback</dt><dd>A backup plan if the original plan fails.</dd></div>
+            <div><dt>Go-live</dt><dd>When people start using the new system for real work.</dd></div>
+          </dl></details>
+        </div>
+        <form class="flow" data-stage="sample">
+          <div class="actions">${action("Use an example answer","example")}</div>
+          ${rubric.map((criterion,i)=>`<div class="field"><label for="answer-${i}">${criterion.name}</label><small id="prompt-${i}">${criterion.prompt}</small>
+            <textarea name="answer-${i}" id="answer-${i}" aria-describedby="prompt-${i}" maxlength="1200" required>${safe(draft.answers[i])}</textarea></div>`).join("")}
+          <label class="consent"><input type="checkbox" name="consent" ${draft.consent ? "checked" : ""}><span><strong>Join the talent pool after review</strong><small>Share your work sample and rubric scores with participating employers.</small></span></label>
+          ${formError}<div class="actions"><button class="btn primary">Submit work sample</button></div>
+        </form>`;
+    }
+    function reviewWork() {
+      return `${heading("Review the candidate’s work","Reviewer view · Candidate PS-104")}
+        <form class="flow" data-stage="review">
+          <div class="actions">${action("Use an example review","score-example")}</div>
+          <div>${rubric.map((criterion,i)=>`<div class="score-row">
+            <div><h3>${criterion.name}</h3><p>${safe(draft.answers[i])}</p></div>
+            <div><label for="score-${i}">${criterion.name} score</label><select id="score-${i}" name="score-${i}" required><option value="">Choose 1–5</option>
+              ${ratingLabels.map((label,n)=>`<option value="${n+1}" ${draft.scores[i]===String(n+1) ? "selected" : ""}>${n+1} · ${label}</option>`).join("")}
+            </select></div>
+          </div>`).join("")}</div>
+          <div class="field"><label for="review-feedback">Evidence and feedback</label><textarea id="review-feedback" name="feedback" maxlength="1000" required>${safe(draft.feedback)}</textarea></div>
+          ${formError}<div class="actions"><button class="btn primary">Save human review</button>${action("Back","back")}</div>
+        </form>`;
+    }
+    function browsePool() {
+      const score = draft.scores.reduce((sum,value)=>sum+Number(value),0);
+      return `${heading("Find the candidate in the talent pool","Employer view · Implementation coordinator")}
+        ${draft.consent ? `<article class="pool-card">
+          <div class="pool-head"><div><h3>Candidate PS-104</h3><p class="subtle">The Rollout Rescue · Human reviewed</p></div><span class="pill">${score} / 20</span></div>
+          <details><summary>View work sample and scores</summary><ul class="evidence">${rubric.map((criterion,i)=>`<li><strong>${criterion.name} · ${draft.scores[i]} / 5</strong><p>${safe(draft.answers[i])}</p></li>`).join("")}</ul></details>
+          <form class="flow" data-stage="request">
+            <div class="field"><label for="company">Request as</label><select id="company" name="company" required><option value="">Choose a fictional employer</option>${companies.map(company=>`<option ${draft.company===company ? "selected" : ""}>${company}</option>`).join("")}</select></div>
+            <div class="actions"><button class="btn primary">Request live interview</button></div>
+          </form>
+        </article>` : `<div class="result"><h3>Candidate PS-104 kept this sample private</h3><p>Employers can discover the sample after the candidate opts in.</p><div class="actions">${action("Opt in as the candidate","opt-in",true)}</div></div>`}
+        <div class="actions">${action("Back","back")}</div>`;
+    }
+    function interview() {
+      const company = safe(draft.company);
+      if (draft.response) return `${heading("Walkthrough complete","Candidate view · Interview request")}
+        <div class="result"><span class="legend">${draft.response==="accepted" ? "Interest recorded" : "Request declined"}</span>
+          <h3>${company}</h3><p>${draft.response==="accepted" ? "In Proof of Skill, the hiring team can now follow up with the candidate to arrange a live conversation." : "In Proof of Skill, the employer can see the candidate’s response. The candidate can still hear from other participating employers while pool sharing is on."}</p></div>
+        <div class="actions">${action("Run the demo again","restart",true)}</div>`;
+      return `${heading("Respond to the interview request","Candidate view · My candidacy")}
+        <div class="result"><h3>${company}</h3><p>${company} requested a live interview about the implementation coordinator role after seeing your work sample.</p>
+          <div class="actions">${action("I’m interested","accept",true)}${action("Decline","decline")}</div></div>
+        <div class="actions">${action("Back","back")}</div>`;
+    }
+    const coach = [
+      ["Start with the work","Candidates use their own words. Everyone gets the same scenario and definitions, and résumés can come later."],
+      ["Score the reasoning","The reviewer sees a candidate code. They look for evidence in the answers and record scores against four criteria."],
+      ["One sample, several employers","An opted-in candidate can be discovered by multiple employers who have agreed to review the work first."],
+      ["Let the candidate decide","The candidate can accept or decline the request. The employer and candidate arrange the interview separately."]
+    ];
+    function render(focus=false) {
+      const [label,body] = coach[current];
+      steps.innerHTML = stepLabels.map((item,i)=>`<li ${i===current ? 'aria-current="step"' : i<current ? 'class="past"' : ""}><span class="step-number" aria-hidden="true">${i<current ? "✓" : i+1}</span>${item}</li>`).join("");
+      stage.innerHTML = [workSample,reviewWork,browsePool,interview][current]();
+      guidance.innerHTML = `<h3>${label}</h3><p class="muted">${body}</p>`;
+      document.querySelector("#restart").hidden = false;
+      if (focus) {
+        const title=document.querySelector("#stage-title");
+        title.focus({preventScroll:true});
+        steps.scrollIntoView({block:"start"});
+      }
+    }
+    function saveEdits() {
+      const form = stage.querySelector("form");
+      if (!form) return;
+      const data = new FormData(form);
+      if (form.dataset.stage === "sample") {
+        const answers = rubric.map((_,i)=>data.get("answer-"+i).trim());
+        if (answers.some((answer,i)=>answer!==draft.answers[i])) {
+          draft.scores=rubric.map(()=>""); draft.feedback=""; draft.company=""; draft.response="";
+        }
+        draft.answers=answers;
+        draft.consent=data.has("consent");
+      } else if (form.dataset.stage === "review") {
+        draft.scores=rubric.map((_,i)=>data.get("score-"+i));
+        draft.feedback=data.get("feedback").trim();
+      } else if (form.dataset.stage === "request") {
+        draft.company=data.get("company");
+      }
+    }
+    function showError(form,message) {
+      const error=form.querySelector("[data-error]");
+      error.textContent=message;
+      error.hidden=false;
+    }
+    stage.addEventListener("submit",event=>{
+      const form=event.target;
+      event.preventDefault();
+      saveEdits();
+      if (form.dataset.stage==="sample" && draft.answers.some(answer=>!answer)) return showError(form,"Add a response for all four criteria.");
+      if (form.dataset.stage==="review" && !draft.feedback) return showError(form,"Add feedback that explains the score.");
+      if (form.dataset.stage==="request" && !companies.includes(draft.company)) return;
+      current++;
+      render(true);
+    });
+    document.addEventListener("click",event=>{
+      const control=event.target.closest("button[data-action]");
+      if (!control) return;
+      const form=control.form;
+      switch (control.dataset.action) {
+        case "example":
+          rubric.forEach((criterion,i)=>{form.elements["answer-"+i].value=criterion.sample;});
+          form.elements["answer-0"].focus();
+          break;
+        case "score-example":
+          ["5","4","4","5"].forEach((value,i)=>{form.elements["score-"+i].value=value;});
+          form.elements.feedback.value="Clear dispatch risk and fallback deadline. Add a measurable training checkpoint before the go-live decision.";
+          form.elements["score-0"].focus();
+          break;
+        case "back": saveEdits(); current--; render(true); break;
+        case "opt-in": draft.consent=true; render(true); break;
+        case "accept": draft.response="accepted"; render(true); break;
+        case "decline": draft.response="declined"; render(true); break;
+        case "restart": draft=freshDraft(); current=0; render(true); break;
+      }
+    });
+    if (location.protocol==="https:" || location.protocol==="http:") {
+      document.querySelector("#workspace").hidden=false;
+      const download=document.querySelector("#download");
+      download.hidden=false;
+      download.addEventListener("click", async ()=>{
+        const error=document.querySelector("#download-error");
+        error.hidden=true;
+        download.disabled=true;
+        try {
+          const response=await fetch("guided-demo.html");
+          if (!response.ok) throw Error("Download failed");
+          const url=URL.createObjectURL(new Blob([await response.text()],{type:"text/html;charset=utf-8"}));
+          const link=document.createElement("a");
+          link.href=url;
+          link.download="proof-of-skill-demo.html";
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(()=>URL.revokeObjectURL(url),1000);
+        } catch {
+          error.textContent="The download could not be prepared. Try again.";
+          error.hidden=false;
+        } finally {
+          download.disabled=false;
+        }
+      });
+    }
+    render();
+  </script>
+</body>
+</html>
+
