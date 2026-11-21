@@ -3,17 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#171a2d">
+  <meta name="theme-color" content="#0d1624">
   <meta name="description" content="Try Proof of Skill from the candidate, reviewer, and employer perspectives.">
   <title>Guided demo · Proof of Skill</title>
   <style>
     :root {
-      color-scheme:light; font:16px/1.55 Inter, "Segoe UI", system-ui, sans-serif;
-      --canvas:#f7f8fc; --ink:#1b1d31; --muted:#565b72; --line:#e1e3ef;
-      --purple:#5439c6; --dark:#4228ae; --lavender:#eeeaff;
+      color-scheme:dark; font:16px/1.55 Inter, "Segoe UI", system-ui, sans-serif;
+      --canvas:#0d1624; --surface:#142236; --control:#101c2d; --raised:#1d3047;
+      --ink:#f6f9fd; --muted:#b5c6d8; --line:#344b63; --edge:#637e9a;
+      --accent:#c8def0; --accent-hover:#ecf5ff; --accent-text:#101e30;
+      --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
     }
     *,*::before,*::after {box-sizing:border-box}
-    body {margin:0;color:var(--ink);background:var(--canvas)}
+    body {margin:0;min-height:100vh;color:var(--ink);background:radial-gradient(ellipse at top right,#1c3049 0%,transparent 65%) 0 0 / 100% 460px no-repeat,var(--canvas)}
     h1,h2,h3,p {margin:0}
     h1,h2,h3 {line-height:1.2;letter-spacing:-.035em}
     h1 {font-size:clamp(2rem,5.4vw,3.2rem);max-width:19ch}
@@ -21,43 +23,46 @@
     h3 {font-size:1.02rem}
     button,input,textarea,select {font:inherit}
     button {cursor:pointer}
-    :focus-visible {outline:2px solid #7755f3;outline-offset:4px}
+    :focus-visible {outline:2px solid var(--accent-hover);outline-offset:4px}
     .topbar {
       display:flex;align-items:center;justify-content:space-between;gap:12px 22px;flex-wrap:wrap;
-      min-height:68px;padding:12px clamp(18px,5vw,42px);background:white;border-bottom:1px solid var(--line)
+      min-height:68px;padding:12px clamp(18px,5vw,42px);background:var(--surface);border-bottom:1px solid var(--line)
     }
-    .brand {display:flex;align-items:center;gap:10px;font-size:1.12rem;font-weight:780;letter-spacing:-.045em}
-    .logo {display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:#a892ff;color:#211844;font-weight:820}
+    .brand {display:flex;align-items:center;gap:10px;font-size:.9rem;font-weight:570;letter-spacing:.15em;text-transform:uppercase}
+    .logo {display:grid;place-items:center;width:34px;height:34px;border-radius:4px;border:1px solid var(--edge);background:var(--raised);color:var(--accent);font-weight:820}
     main {max-width:1090px;margin:0 auto;padding:28px clamp(15px,4vw,34px) 55px}
-    .hero {position:relative;isolation:isolate;overflow:hidden;padding:clamp(20px,5vw,35px);border-radius:18px;background:#252044;color:white}
+    .hero {position:relative;isolation:isolate;overflow:hidden;min-height:252px;display:grid;align-content:center;padding:clamp(20px,5vw,37px);border:1px solid var(--line);border-radius:8px;background:#13233a;color:var(--ink)}
     .hero::after {
-      content:"";z-index:-1;position:absolute;inset:0 0 0 auto;width:54%;
-      background:radial-gradient(ellipse at 80% 60%,#6949ac,transparent 64%),radial-gradient(circle,#c4a6ff66 1px,transparent 1.4px) 0 0/16px 16px;
-      mask-image:linear-gradient(to right,transparent,#000 70%)
+      content:"";z-index:-1;position:absolute;inset:0 0 0 auto;width:63%;
+      background:linear-gradient(90deg,#13233a 0%,#13233ac9 23%,transparent 70%),
+        linear-gradient(0deg,#13233a88,transparent 55%),
+        var(--demo-image,none) right 26% / cover no-repeat,
+        radial-gradient(ellipse at 82% 22%,#385776,#172b46 52%,#13233a 80%);
     }
-    .tag {display:inline-flex;align-items:center;gap:8px;padding:4px 9px;border:1px solid #ad99e478;border-radius:6px;color:#e5dbff;font-size:.85rem;font-weight:680;margin-bottom:12px}
-    .hero p {color:#e0dbf0;max-width:59ch;margin-top:12px}
-    .steps {display:grid;grid-template-columns:repeat(4,1fr);margin:17px 0;padding:0;list-style:none;border:1px solid var(--line);border-radius:12px;background:white;overflow:hidden}
+    .tag {color:var(--muted);font:650 .77rem/1.4 var(--mono);text-transform:uppercase;letter-spacing:.10em;margin-bottom:11px}
+    .hero p {color:var(--muted);max-width:45ch;margin-top:13px}
+    .hero h1 {font-size:clamp(1.75rem,4.25vw,3.1rem);max-width:19ch;letter-spacing:.04em;font-weight:380}
+    .steps {display:grid;grid-template-columns:repeat(4,1fr);margin:17px 0;padding:0;list-style:none;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
     .steps li {padding:12px;display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted);font-weight:640}
     .steps li + li {border-left:1px solid var(--line)}
-    .steps li[aria-current=step] {color:var(--dark);background:#f2eeff}
-    .steps li.past {color:#22654e}
-    .step-number {display:grid;place-items:center;flex:none;width:24px;height:24px;border-radius:50%;background:#eff0f7;font-size:.81rem}
-    [aria-current=step] .step-number {color:white;background:var(--purple)}
-    .past .step-number {color:#21674e;background:#e7f5ee}
+    .steps li[aria-current=step] {color:var(--accent);background:var(--raised)}
+    .steps li.past {color:#b7dec8}
+    .step-number {display:grid;place-items:center;flex:none;width:24px;height:24px;border-radius:50%;background:var(--raised);font-size:.81rem}
+    [aria-current=step] .step-number {color:var(--accent-text);background:var(--accent)}
+    .past .step-number {color:#b7dec8;background:#213129}
     .layout {display:grid;grid-template-columns:minmax(0,1fr) minmax(210px,.37fr);align-items:start;gap:15px}
-    .panel {min-width:0;padding:clamp(15px,4vw,23px);background:white;border:1px solid var(--line);border-radius:14px}
+    .panel {min-width:0;padding:clamp(15px,4vw,23px);background:var(--surface);border:1px solid var(--line);border-radius:8px}
     .flow {display:grid;gap:15px}
     .muted {color:var(--muted)}
     .subtle {font-size:.9rem;color:var(--muted);margin-top:4px}
     .actions {display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .btn {min-height:41px;display:inline-flex;align-items:center;justify-content:center;padding:7px 13px;background:white;border:1px solid var(--line);border-radius:8px;color:var(--ink);font-weight:680;font-size:.9rem;text-decoration:none}
-    .btn:hover {background:#f1edfd;border-color:#d2c8ef}
-    .btn.primary {color:white;background:var(--purple);border-color:var(--purple)}
-    .btn.primary:hover {background:var(--dark)}
+    .btn {min-height:41px;display:inline-flex;align-items:center;justify-content:center;padding:7px 13px;background:var(--control);border:1px solid var(--edge);border-radius:4px;color:var(--ink);font-weight:650;font-size:.9rem;text-decoration:none}
+    .btn:hover {background:var(--raised);border-color:var(--edge)}
+    .btn.primary {color:var(--accent-text);background:var(--accent);border-color:var(--accent)}
+    .btn.primary:hover {background:var(--accent-hover);border-color:var(--accent-hover)}
     .btn.small {min-height:35px;padding:5px 10px}
-    .brief {background:#f8f7fd;border:1px solid #e7e1fb;border-radius:10px;padding:13px;display:grid;gap:8px}
-    details summary {cursor:pointer;color:var(--dark);font-weight:680}
+    .brief {background:var(--control);border:1px solid var(--line);border-radius:10px;padding:13px;display:grid;gap:8px}
+    details summary {cursor:pointer;color:var(--accent);font-weight:680}
     .brief dfn {font-style:normal;font-weight:650}
     .brief dl {display:grid;gap:6px;margin:9px 0 1px}
     .brief dl div {display:grid;grid-template-columns:7rem 1fr;gap:8px}
@@ -66,26 +71,25 @@
     .field {display:grid;gap:4px}
     .field label {font-weight:660}
     .field small,.consent small {color:var(--muted);font-size:.87rem}
-    textarea,select {width:100%;min-width:0;padding:7px 9px;border:1px solid #c9ccdc;border-radius:8px;color:var(--ink);background:white}
+    textarea,select {width:100%;min-width:0;padding:7px 9px;border:1px solid var(--edge);border-radius:5px;color:var(--ink);background:var(--control)}
     textarea {min-height:72px;resize:vertical}
     .consent {display:flex;gap:9px;padding:10px;border:1px solid var(--line);border-radius:8px}
-    .consent input {flex:none;width:18px;height:18px;margin:3px 0 0;accent-color:var(--purple)}
+    .consent input {flex:none;width:18px;height:18px;margin:3px 0 0;accent-color:var(--accent)}
     .consent small {display:block}
     .score-row {display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:10px;align-items:start;border-bottom:1px solid var(--line);padding:9px 0}
-    .score-row p {color:#41465b;margin-top:3px;white-space:pre-wrap;overflow-wrap:anywhere}
+    .score-row p {color:var(--muted);margin-top:3px;white-space:pre-wrap;overflow-wrap:anywhere}
     .score-row label {display:block;font-size:.85rem;font-weight:660;margin-bottom:4px}
-    .pool-card,.result {border:1px solid #e4ddfa;border-radius:10px;padding:13px;background:#fbfaff;display:grid;gap:10px}
+    .pool-card,.result {border:1px solid var(--line);border-radius:10px;padding:13px;background:var(--control);display:grid;gap:10px}
     .pool-head {display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-    .pill {display:inline-flex;white-space:nowrap;border-radius:99px;background:var(--lavender);color:var(--dark);padding:4px 8px;font-size:.83rem;font-weight:720}
+    .pill {display:inline-flex;white-space:nowrap;border-radius:99px;background:var(--raised);color:var(--accent);padding:4px 8px;font-size:.83rem;font-weight:720}
     .evidence {list-style:none;margin:8px 0 0;padding:0}
     .evidence li {padding:6px 0;border-top:1px solid var(--line)}
     .evidence li p {white-space:pre-wrap;overflow-wrap:anywhere}
-    .feedback {background:#f1effb;border-radius:7px;padding:8px 10px;color:#493c70}
     .fine-print {font-size:.86rem;color:var(--muted);margin-top:15px}
-    .legend {color:var(--dark);font-size:.88rem;font-weight:710}
-    .alert {color:#97343d;font-weight:650}
+    .legend {color:var(--accent);font-size:.88rem;font-weight:710}
+    .alert {color:#f2c2c2;font-weight:650}
     [hidden] {display:none!important}
-    @media(max-width:760px) {.layout {grid-template-columns:1fr}.steps li {padding:9px 7px;font-size:.83rem}}
+    @media(max-width:760px) {.hero::after {opacity:.42;width:100%}.layout {grid-template-columns:1fr}.steps li {padding:9px 7px;font-size:.83rem}}
     @media(max-width:480px) {.steps{grid-template-columns:repeat(2,1fr)}.steps li:nth-child(3){border-left:none}.steps li:nth-child(n+3){border-top:1px solid var(--line)}.steps li{padding:7px}.score-row{grid-template-columns:1fr}.brief dl div{grid-template-columns:1fr;gap:1px}}
   </style>
 </head>
@@ -93,7 +97,7 @@
   <header class="topbar">
     <div class="brand"><span class="logo" aria-hidden="true">✓</span>Proof of Skill</div>
     <nav class="actions" aria-label="Demo controls">
-      <a class="btn small" id="workspace" href="./" hidden>Hiring workspace</a>
+      <a class="btn small" id="workspace" href="./#workspace" hidden>Hiring workspace</a>
       <button class="btn small" id="download" type="button" hidden>Download demo</button>
       <button class="btn small" type="button" data-action="restart" id="restart" hidden>Restart demo</button>
     </nav>
@@ -266,6 +270,7 @@
       }
     });
     if (location.protocol==="https:" || location.protocol==="http:") {
+      document.documentElement.style.setProperty("--demo-image", 'url("blue-hour.webp")');
       document.querySelector("#workspace").hidden=false;
       const download=document.querySelector("#download");
       download.hidden=false;

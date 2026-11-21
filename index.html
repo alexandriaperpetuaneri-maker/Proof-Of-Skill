@@ -4,14 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Practical work samples and structured human review for skills-first hiring.">
-  <meta name="theme-color" content="#171a2d">
+  <meta name="theme-color" content="#0d1624">
   <title>Proof of Skill</title>
   <link rel="stylesheet" href="style.css">
+  <script defer src="candidate-auth-config.js"></script>
+  <script defer src="candidate-auth.js"></script>
+  <script defer src="candidate-idle.js"></script>
+  <script defer src="teams.js"></script>
+  <script defer src="employer-demo.js"></script>
+  <script defer src="northline-demo.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <div id="app"></div>
+  <aside class="session-warning panel panel-pad flow" id="session-warning" aria-labelledby="session-warning-heading" hidden>
+    <h2 id="session-warning-heading">Still working?</h2>
+    <p id="session-warning-message" role="status"></p>
+    <div class="actions"><button class="btn primary" type="button">Stay signed in</button></div>
+  </aside>
   <div id="status" class="toast" role="status" aria-live="polite"></div>
   <noscript>This workspace requires JavaScript.</noscript>
 </body>
